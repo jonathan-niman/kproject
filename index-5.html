@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPROJECT — Papercraft Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --red: #D72B2B;
+            --black: #0a0a0a;
+            --white: #f5f5f5;
+            --gray: #1a1a1a;
+            --gray2: #2a2a2a;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            font-family: 'Barlow', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            width: 12px; height: 12px;
+            background: var(--red);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--red);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.1s ease;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--red); }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 48px;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+        }
+
+        .nav-logo {
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none;
+        }
+        .nav-logo-icon {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        /* Slot logo: ganti src di <img> dengan path foto logo kproject */
+        .nav-logo-icon img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+        }
+        /* Fallback kalau logo belum ada */
+        .nav-logo-icon .logo-fallback {
+            width: 40px; height: 40px;
+            background: var(--red);
+            clip-path: polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%);
+        }
+        .nav-logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex; gap: 36px; list-style: none;
+        }
+        .nav-links a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(245,245,245,0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--red); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex; align-items: center;
+            padding: 0 48px;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute; inset: 0;
+            background: 
+                linear-gradient(135deg, rgba(215,43,43,0.08) 0%, transparent 50%),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(215,43,43,0.03) 40px,
+                    rgba(215,43,43,0.03) 41px
+                );
+        }
+
+        .hero-slash {
+            position: absolute;
+            right: -100px; top: -100px;
+            width: 700px; height: 700px;
+            background: var(--red);
+            clip-path: polygon(60% 0%, 100% 0%, 40% 100%, 0% 100%);
+            opacity: 0.07;
+        }
+        .hero-slash-2 {
+            position: absolute;
+            right: 50px; bottom: -200px;
+            width: 400px; height: 600px;
+            background: var(--red);
+            clip-path: polygon(60% 0%, 100% 0%, 40% 100%, 0% 100%);
+            opacity: 0.04;
+        }
+
+        .hero-content {
+            position: relative; z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.2s forwards;
+        }
+        .hero-tag::before {
+            content: '';
+            display: block;
+            width: 32px; height: 1px;
+            background: var(--red);
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 12vw, 9rem);
+            line-height: 0.9;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.35s forwards;
+        }
+        .hero-title span { color: var(--red); }
+
+        .hero-subtitle {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            letter-spacing: 6px;
+            color: rgba(245,245,245,0.25);
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.5s forwards;
+        }
+
+        .hero-desc {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(245,245,245,0.55);
+            max-width: 480px;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.65s forwards;
+        }
+
+        .hero-cta {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.8s forwards;
+        }
+
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--red);
+            color: var(--white);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 16px 36px;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-primary:hover {
+            background: #ff3333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 10px;
+            border: 1px solid rgba(245,245,245,0.2);
+            color: rgba(245,245,245,0.6);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 16px 36px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            opacity: 0;
+            animation: fadeUp 0.8s 1.1s forwards;
+        }
+        .hero-scroll span {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(245,245,245,0.3);
+        }
+        .scroll-line {
+            width: 1px; height: 48px;
+            background: linear-gradient(to bottom, rgba(245,245,245,0.3), transparent);
+            animation: scrollPulse 2s infinite;
+        }
+
+        /* STATS BAR */
+        .stats-bar {
+            background: var(--gray);
+            border-top: 1px solid rgba(215,43,43,0.3);
+            border-bottom: 1px solid rgba(215,43,43,0.1);
+            padding: 24px 48px;
+            display: flex; justify-content: center; gap: 80px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+            opacity: 0;
+            animation: fadeUp 0.6s forwards;
+        }
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.4rem;
+            color: var(--red);
+            letter-spacing: 2px;
+        }
+        .stat-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(245,245,245,0.35);
+            margin-top: 2px;
+        }
+
+        /* ABOUT */
+        .about {
+            padding: 120px 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::after {
+            content: '';
+            flex: 1; max-width: 40px;
+            height: 1px;
+            background: var(--red);
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+        .section-title span { color: var(--red); }
+
+        .about-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: rgba(245,245,245,0.55);
+            margin-bottom: 16px;
+        }
+
+        .about-visual {
+            position: relative;
+        }
+        .about-box {
+            background: var(--gray);
+            border: 1px solid rgba(215,43,43,0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--red);
+        }
+        .about-box-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        .feature-list { list-style: none; }
+        .feature-list li {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(245,245,245,0.05);
+            font-size: 0.9rem;
+            color: rgba(245,245,245,0.6);
+            line-height: 1.5;
+        }
+        .feature-list li:last-child { border-bottom: none; }
+        .feature-list li::before {
+            content: '▶';
+            color: var(--red);
+            font-size: 0.6rem;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        /* GALLERY */
+        .gallery-section {
+            padding: 120px 48px;
+            background: var(--gray);
+            position: relative;
+            overflow: hidden;
+        }
+        .gallery-section::before {
+            content: 'GALLERY';
+            position: absolute;
+            top: 40px; right: -20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 10rem;
+            color: rgba(215,43,43,0.04);
+            letter-spacing: 10px;
+            pointer-events: none;
+        }
+
+        .gallery-header {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        .gallery-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto;
+            gap: 12px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            background: var(--gray2);
+            border: 1px solid rgba(215,43,43,0.1);
+        }
+        .gallery-item:first-child {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: rgba(245,245,245,0.15);
+            transition: all 0.3s;
+        }
+        .gallery-item:first-child .gallery-placeholder {
+            aspect-ratio: unset;
+            height: 100%;
+            min-height: 360px;
+        }
+        .gallery-placeholder-icon {
+            font-size: 2.5rem;
+            opacity: 0.4;
+        }
+        .gallery-placeholder-text {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .gallery-item:hover .gallery-placeholder {
+            color: rgba(215,43,43,0.4);
+        }
+
+        .gallery-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(215,43,43,0.7), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex; align-items: flex-end; padding: 20px;
+        }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay-text {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .gallery-note {
+            max-width: 1200px;
+            margin: 20px auto 0;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: rgba(245,245,245,0.25);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* PRODUCTS */
+        .products-section {
+            padding: 120px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 60px;
+        }
+
+        .product-card {
+            background: var(--gray);
+            padding: 36px 32px;
+            border: 1px solid rgba(215,43,43,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .product-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--red);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            transform-origin: left;
+        }
+        .product-card:hover { border-color: rgba(215,43,43,0.3); }
+        .product-card:hover::after { transform: scaleX(1); }
+
+        .product-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: rgba(215,43,43,0.15);
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        .product-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+        .product-desc {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: rgba(245,245,245,0.4);
+        }
+
+        /* JOIN */
+        .join-section {
+            padding: 120px 48px;
+            background: var(--gray);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .join-bg-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(6rem, 20vw, 18rem);
+            color: rgba(215,43,43,0.04);
+            letter-spacing: 10px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .join-content {
+            position: relative; z-index: 2;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .join-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        .join-title span { color: var(--red); }
+
+        .join-desc {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(245,245,245,0.5);
+            margin-bottom: 48px;
+        }
+
+        .join-link {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: rgba(245,245,245,0.25);
+            margin-top: 20px;
+            display: block;
+        }
+
+        /* SOSMED GRID */
+        .socmed-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        .socmed-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(215,43,43,0.15);
+            padding: 16px 20px;
+            text-decoration: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .socmed-card:hover {
+            border-color: rgba(215,43,43,0.5);
+            background: rgba(215,43,43,0.06);
+        }
+        .socmed-icon {
+            color: var(--red);
+            flex-shrink: 0;
+        }
+        .socmed-platform {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(245,245,245,0.35);
+        }
+        .socmed-handle {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--white);
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #050505;
+            border-top: 1px solid rgba(215,43,43,0.15);
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 4px;
+            color: var(--white);
+        }
+        .footer-logo span { color: var(--red); }
+
+        .footer-links {
+            display: flex; gap: 32px; list-style: none;
+        }
+        .footer-links a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(245,245,245,0.3);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--red); }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            color: rgba(245,245,245,0.2);
+            letter-spacing: 1px;
+        }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(215,43,43,0.4), transparent);
+            margin: 0 48px;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            .hero { padding: 0 24px; }
+            .stats-bar { padding: 24px; gap: 40px; }
+            .about { grid-template-columns: 1fr; padding: 80px 24px; gap: 40px; }
+            .gallery-section { padding: 80px 24px; }
+            .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .gallery-item:first-child { grid-column: span 2; }
+            .products-section { padding: 80px 24px; }
+            .products-grid { grid-template-columns: 1fr; gap: 2px; }
+            .join-section { padding: 80px 24px; }
+            footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+            .divider { margin: 0 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAV -->
+    <nav>
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">
+                <!-- LOGO: Ganti "logo.png" dengan nama file logo kproject lo -->
+                <!-- Taruh file logo di folder yang sama dengan index.html -->
+                <img src="logo.png" alt="KPROJECT Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <div class="logo-fallback" style="display:none;"></div>
+            </div>
+            <span class="nav-logo-text">KPROJECT</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">Tentang</a></li>
+            <li><a href="#gallery">Galeri</a></li>
+            <li><a href="#products">Produk</a></li>
+            <li><a href="#join">Gabung</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-slash"></div>
+        <div class="hero-slash-2"></div>
+
+        <div class="hero-content">
+            <div class="hero-tag">Papercraft Community — Bandung</div>
+            <h1 class="hero-title">K<span>PRO</span><br>JECT</h1>
+            <p class="hero-subtitle">100% Kertas. 100% Karya.</p>
+            <p class="hero-desc">
+                Komunitas papercraft yang passionate — tempat berkumpulnya para kreator yang percaya bahwa kertas bisa jadi segalanya. Dari figure, kendaraan, hingga karya yang bikin orang gak percaya.
+            </p>
+            <div class="hero-cta">
+                <a href="https://chat.whatsapp.com/HA5UzHJNp4bIEMUe5EHVRo" target="_blank" class="btn-primary">Gabung Sekarang</a>
+                <a href="#gallery" class="btn-secondary">Lihat Karya</a>
+            </div>
+        </div>
+
+        <div class="hero-scroll">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Berbahan Kertas</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">BDG</div>
+            <div class="stat-label">Berbasis Bandung</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Kreativitas</div>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="about-text-col reveal">
+            <div class="section-label">Tentang Kami</div>
+            <h2 class="section-title">Bukan Cuma <span>Hobi.</span></h2>
+            <p class="about-text">
+                KPROJECT adalah komunitas papercraft yang lahir dari kecintaan terhadap seni melipat, memotong, dan merangkai kertas menjadi karya yang memukau. Kami percaya kertas bukan sekadar bahan — itu adalah medium ekspresi.
+            </p>
+            <p class="about-text">
+                Dari figure anime, Gundam, hingga replika kendaraan yang detail — semua dibuat dari kertas, 100%. Bergabunglah bersama kami dan buktikan sendiri.
+            </p>
+        </div>
+        <div class="about-visual reveal">
+            <div class="about-box">
+                <div class="about-box-title">Apa yang Kami Lakukan</div>
+                <ul class="feature-list">
+                    <li>Workshop papercraft gratis untuk anggota komunitas</li>
+                    <li>Exhibition & pameran karya secara berkala</li>
+                    <li>Mengadakan Event Pameran Karya di Event Tertentu</li>
+                    <li>Menyediakan Free Workshop setiap Event Terkait</li>
+                    <li>Menjadi Naungan bagi para penghobi terkait</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- GALLERY -->
+    <section class="gallery-section" id="gallery">
+        <div class="gallery-header reveal">
+            <div class="section-label">Galeri Karya</div>
+            <h2 class="section-title">Hasil <span>Tangan</span> Kami</h2>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <div class="gallery-placeholder-icon">✦</div>
+                    <div class="gallery-placeholder-text">Featured Work</div>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-overlay-text">Karya Utama</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <div class="gallery-placeholder-icon">✦</div>
+                    <div class="gallery-placeholder-text">Karya 02</div>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-overlay-text">Figure Series</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <div class="gallery-placeholder-icon">✦</div>
+                    <div class="gallery-placeholder-text">Karya 03</div>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-overlay-text">Vehicle Series</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <div class="gallery-placeholder-icon">✦</div>
+                    <div class="gallery-placeholder-text">Karya 04</div>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-overlay-text">Custom Build</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-placeholder">
+                    <div class="gallery-placeholder-icon">✦</div>
+                    <div class="gallery-placeholder-text">Karya 05</div>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-overlay-text">Special Edition</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="gallery-note">✦ Ganti placeholder dengan foto karya asli kproject ✦</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PRODUCTS -->
+    <section class="products-section" id="products">
+        <div class="reveal">
+            <div class="section-label">Yang Kami Sediakan</div>
+            <h2 class="section-title">Produk & <span>Material</span></h2>
+        </div>
+
+        <div class="products-grid">
+            <div class="product-card reveal">
+                <div class="product-num">01</div>
+                <div class="product-name">Pola / Template</div>
+                <div class="product-desc">Pola papercraft yang telah dicetak dengan kertas khusus dengan ketebalan tertentu. Dengan berbagai tingkat kesulitan dan model beragam.</div>
+            </div>
+            <div class="product-card reveal">
+                <div class="product-num">02</div>
+                <div class="product-name">Peralatan yang Digunakan</div>
+                <div class="product-desc">Tools memadai dapat membuat hasil rakit menjadi lebih rapi dan presisi di setiap karya.</div>
+            </div>
+            <div class="product-card reveal">
+                <div class="product-num">03</div>
+                <div class="product-name">Penggunaan Lem</div>
+                <div class="product-desc">Disarankan menggunakan lem kertas atau lem kayu dengan lem berjenis PVA/C.</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- JOIN -->
+    <section class="join-section" id="join">
+        <div class="join-bg-text">JOIN</div>
+        <div class="join-content reveal">
+            <div class="section-label" style="justify-content: center;">Bergabung</div>
+            <h2 class="join-title">Siap Jadi Bagian dari <span>KPROJECT?</span></h2>
+            <p class="join-desc">
+                Komunitas terbuka untuk semua — pemula hingga yang sudah berpengalaman. Yang penting: semangat berkarya dan cinta sama kertas.
+            </p>
+            <a href="https://chat.whatsapp.com/HA5UzHJNp4bIEMUe5EHVRo" target="_blank" class="btn-primary" style="display: inline-flex; margin: 0 auto;">
+                Gabung via WhatsApp
+            </a>
+
+            <!-- SOSIAL MEDIA -->
+            <div class="socmed-grid">
+                <a href="https://www.tiktok.com/@kprojectpapercraft" target="_blank" class="socmed-card">
+                    <div class="socmed-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+                    </div>
+                    <div class="socmed-info">
+                        <div class="socmed-platform">TikTok</div>
+                        <div class="socmed-handle">@kprojectpapercraft</div>
+                    </div>
+                </a>
+                <a href="https://www.instagram.com/kprojectgalery_" target="_blank" class="socmed-card">
+                    <div class="socmed-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </div>
+                    <div class="socmed-info">
+                        <div class="socmed-platform">Instagram</div>
+                        <div class="socmed-handle">kprojectgalery_</div>
+                    </div>
+                </a>
+                <a href="https://wa.me/6281399735505" target="_blank" class="socmed-card">
+                    <div class="socmed-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                    </div>
+                    <div class="socmed-info">
+                        <div class="socmed-platform">WhatsApp Business</div>
+                        <div class="socmed-handle">+62 813-9973-5505</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">K<span>PROJECT</span></div>
+        <ul class="footer-links">
+            <li><a href="#about">Tentang</a></li>
+            <li><a href="#gallery">Galeri</a></li>
+            <li><a href="#join">Gabung</a></li>
+            <li><a href="https://www.instagram.com/kprojectgalery_" target="_blank">Instagram</a></li>
+            <li><a href="https://www.tiktok.com/@kprojectpapercraft" target="_blank">TikTok</a></li>
+        </ul>
+        <div class="footer-copy">© 2025 KPROJECT — Bandung</div>
+    </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        const ring = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+        function animateCursor() {
+            cursor.style.left = mx + 'px';
+            cursor.style.top = my + 'px';
+            rx += (mx - rx) * 0.12;
+            ry += (my - ry) *.12;
+            ring.style.left = rx + 'px';
+            ring.style.top = ry + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+                ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+                ring.style.opacity = '0.3';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+                ring.style.transform = 'translate(-50%,-50%) scale(1)';
+                ring.style.opacity = '0.6';
+            });
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+
+        // Nav scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10,10,10,0.97)';
+                nav.style.borderBottom = '1px solid rgba(215,43,43,0.15)';
+            } else {
+                nav.style.background = 'linear-gradient(to bottom, rgba(10,10,10,0.95), transparent)';
+                nav.style.borderBottom = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
